@@ -1,0 +1,73 @@
+package io.aegis.lang.chicago;
+
+import java.util.Objects;
+
+public class Token {
+
+    public static final Token ASSIGN = new Token(TokenType.ASSIGN, "=");
+    public static final Token PLUS = new Token(TokenType.PLUS, "+");
+    public static final Token MINUS = new Token(TokenType.MINUS, "-");
+    public static final Token BANG = new Token(TokenType.BANG, "!");
+    public static final Token SLASH = new Token(TokenType.SLASH, "/");
+    public static final Token ASTERISK = new Token(TokenType.ASTERISK, "*");
+    public static final Token LESS_THAN = new Token(TokenType.LESS_THAN, "<");
+    public static final Token GREATER_THAN = new Token(TokenType.GREATER_THAN, ">");
+    public static final Token LET = new Token(TokenType.LET, "let");
+    public static final Token SEMICOLON = new Token(TokenType.SEMICOLON, ";");
+    public static final Token COMMA = new Token(TokenType.COMMA, ",");
+    public static final Token LEFT_PARENTHESIS = new Token(TokenType.LPAREN, "(");
+    public static final Token RIGHT_PARENTHESIS = new Token(TokenType.RPAREN, ")");
+    public static final Token LEFT_BRACE = new Token(TokenType.LBRACE, "{");
+    public static final Token RIGHT_BRACE = new Token(TokenType.RBRACE, "}");
+    public static final Token FUNCTION = new Token(TokenType.FUNCTION, "fn");
+    public static final Token IF = new Token(TokenType.IF, "if");
+    public static final Token TRUE = new Token(TokenType.TRUE, "true");
+    public static final Token FALSE = new Token(TokenType.FALSE, "false");
+    public static final Token ELSE = new Token(TokenType.ELSE, "else");
+    public static final Token RETURN = new Token(TokenType.RETURN, "return");
+    public static final Token EQUALS = new Token(TokenType.EQUALS, "==");
+    public static final Token NOT_EQUALS = new Token(TokenType.NOT_EQUALS, "-=");
+
+    TokenType type;
+    String literal;
+
+    public Token(TokenType type, char literal) {
+        this(type, String.valueOf(literal));
+    }
+
+    public Token(TokenType type, String literal) {
+        this.type = Objects.requireNonNull(type, "type can't be null");
+        this.literal = Objects.requireNonNull(literal, "literal can't be null");
+    }
+
+    @Override
+    public String toString() {
+        return "Token{" + type + ", " + literal + "}";
+    }
+
+    public static Token newIdentifier(String literal) {
+        return new Token(TokenType.IDENT, literal);
+    }
+
+    public static Token newInteger(String literal) {
+        return new Token(TokenType.INT, literal);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Token)) {
+            return false;
+        }
+        var otherToken = (Token) obj;
+        return type.equals(otherToken.type) && literal.equals(otherToken.literal); 
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, literal);
+    }
+
+}
