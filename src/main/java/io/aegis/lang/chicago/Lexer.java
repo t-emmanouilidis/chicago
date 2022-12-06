@@ -28,7 +28,7 @@ public class Lexer {
             case '=':
                 if (peekNextChar() == '=') {
                     readNextChar();
-                    token = Token.EQUALS;
+                    token = Token.EQUAL;
                 } else {
                     token = Token.ASSIGN;
                 }
@@ -63,7 +63,7 @@ public class Lexer {
             case '!':
                 if (peekNextChar() == '=') {
                     readNextChar();
-                    token = Token.NOT_EQUALS;
+                    token = Token.NOT_EQUAL;
                 } else {
                     token = Token.BANG;
                 }

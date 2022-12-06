@@ -1,6 +1,7 @@
 package io.aegis.lang.chicago;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
@@ -8,17 +9,21 @@ public final class Repl {
 
     private static final String PROMPT = ">> ";
 
-    public static void start() throws Exception {
+    public static void start() throws IOException {
         try (Reader is = new InputStreamReader(System.in);
                 BufferedReader bufferedReader = new BufferedReader(is)) {
             while (true) {
                 System.out.print(PROMPT);
                 String line = bufferedReader.readLine();
                 if (line != null) {
-                    var lexer = new Lexer(line);
-                    for (Token token = lexer.nextToken(); token.type != TokenType.EOF; token = lexer.nextToken()) {
-                        System.out.println(token.toString());
+                    var parser = new Parser(line);
+                    var program = parser.parseProgram();
+                    if (parser.foundErrors()) {
+                        parser.printErrors();
+                        continue;
                     }
+                    var evaluated = new Evaluator().evaluate(program);
+                    System.out.println(evaluated.inspect());
                 }
             }
         }

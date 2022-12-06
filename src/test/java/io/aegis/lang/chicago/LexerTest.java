@@ -113,11 +113,11 @@ public class LexerTest {
               SEMICOLON,
               RIGHT_BRACE,
               newInteger("10"),
-              Token.EQUALS,
+              Token.EQUAL,
               newInteger("10"),
               SEMICOLON,
               newInteger("10"),
-              Token.NOT_EQUALS,
+              Token.NOT_EQUAL,
               newInteger("9"),
               SEMICOLON
         );

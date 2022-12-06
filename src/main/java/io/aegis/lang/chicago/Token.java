@@ -2,7 +2,7 @@ package io.aegis.lang.chicago;
 
 import java.util.Objects;
 
-public class Token {
+public record Token(TokenType type, String literal) {
 
     public static final Token ASSIGN = new Token(TokenType.ASSIGN, "=");
     public static final Token PLUS = new Token(TokenType.PLUS, "+");
@@ -25,19 +25,24 @@ public class Token {
     public static final Token FALSE = new Token(TokenType.FALSE, "false");
     public static final Token ELSE = new Token(TokenType.ELSE, "else");
     public static final Token RETURN = new Token(TokenType.RETURN, "return");
-    public static final Token EQUALS = new Token(TokenType.EQUALS, "==");
-    public static final Token NOT_EQUALS = new Token(TokenType.NOT_EQUALS, "-=");
-
-    TokenType type;
-    String literal;
+    public static final Token EQUAL = new Token(TokenType.EQUAL, "==");
+    public static final Token NOT_EQUAL = new Token(TokenType.NOT_EQUAL, "!=");
 
     public Token(TokenType type, char literal) {
         this(type, String.valueOf(literal));
     }
 
-    public Token(TokenType type, String literal) {
-        this.type = Objects.requireNonNull(type, "type can't be null");
-        this.literal = Objects.requireNonNull(literal, "literal can't be null");
+    public Token {
+        Objects.requireNonNull(type, "type can't be null");
+        Objects.requireNonNull(literal, "literal can't be null");
+    }
+
+    public boolean isLastOne() {
+        return TokenType.EOF.equals(type);
+    }
+
+    public boolean isNotLastOne() {
+        return !isLastOne();
     }
 
     @Override
@@ -51,6 +56,14 @@ public class Token {
 
     public static Token newInteger(String literal) {
         return new Token(TokenType.INT, literal);
+    }
+
+    public boolean sameAs(Token otherToken) {
+        return this.equals(otherToken);
+    }
+
+    public boolean notSameAs(Token otherToken) {
+        return !sameAs(otherToken);
     }
 
     @Override

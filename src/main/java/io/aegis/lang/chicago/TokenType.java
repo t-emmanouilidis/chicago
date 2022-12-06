@@ -30,12 +30,12 @@ public enum TokenType {
     ASTERISK("*"),
     LESS_THAN("<"),
     GREATER_THAN(">"),
-    NOT_EQUALS("!="),
-    EQUALS("==");
+    NOT_EQUAL("!="),
+    EQUAL("==");
 
-    private String keyword;
+    private final String keyword;
 
-    private TokenType(String keyword) {
+    TokenType(String keyword) {
         this.keyword = keyword;
     }
 
