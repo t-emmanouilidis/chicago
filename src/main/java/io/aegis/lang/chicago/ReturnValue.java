@@ -3,7 +3,7 @@ package io.aegis.lang.chicago;
 public record ReturnValue(Value value) implements Value {
 
     @Override
-    public ValueType type() {
+    public String type() {
         return ValueType.RETURN;
     }
 

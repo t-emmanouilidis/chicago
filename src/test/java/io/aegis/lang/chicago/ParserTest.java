@@ -233,4 +233,37 @@ public class ParserTest {
         assertThat(iterator.next().toString(), is(equalTo("1")));
     }
 
+    @Test
+    public void shouldBeAbleToParseAStringLiteral() {
+        var input = "\"hello world\"";
+        var parser = new Parser(input);
+        var program = parser.parseProgram();
+        var expr = program.iterator().nextStatementAs(ExpressionStatement.class).expressionAs(StringLiteral.class);
+        assertThat(expr.token().type(), is(equalTo(TokenType.STRING)));
+        assertThat(expr.value(), is(equalTo("hello world")));
+    }
+
+    @Test
+    public void shouldBeAbleToParseAnArray() {
+        var input = "[1, 2 * 3]";
+        var parser = new Parser(input);
+        var program = parser.parseProgram();
+        var arrayLiteral = program.iterator()
+              .nextStatementAs(ExpressionStatement.class)
+              .expressionAs(ArrayLiteral.class);
+        var elementIterator = arrayLiteral.iterator();
+        assertThat(elementIterator.next().toString(), is(equalTo("1")));
+        assertThat(elementIterator.next().toString(), is(equalTo("(2 * 3)")));
+    }
+
+    @Test
+    public void shouldBeAbleToParseAnIndexExpression() {
+        var input = "myArray[1 + 1]";
+        var parser = new Parser(input);
+        var program = parser.parseProgram();
+        var indexExpr = program.iterator().nextStatementAs(ExpressionStatement.class).expressionAs(IndexExpression.class);
+        assertThat(indexExpr.left().getClass(), is(equalTo(Identifier.class)));
+        assertThat(indexExpr.index().getClass(), is(equalTo(InfixExpression.class)));
+    }
+
 }

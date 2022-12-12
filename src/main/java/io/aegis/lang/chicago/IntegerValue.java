@@ -3,7 +3,7 @@ package io.aegis.lang.chicago;
 public record IntegerValue(long value) implements Value {
 
     @Override
-    public ValueType type() {
+    public String type() {
         return ValueType.INTEGER;
     }
 
@@ -29,4 +29,9 @@ public record IntegerValue(long value) implements Value {
     public int hashCode() {
         return (int) (value ^ (value >>> 32));
     }
+
+    public static IntegerValue of(long value) {
+        return new IntegerValue(value);
+    }
+
 }

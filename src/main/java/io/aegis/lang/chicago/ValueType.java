@@ -1,10 +1,19 @@
 package io.aegis.lang.chicago;
 
-public enum ValueType {
+public final class ValueType {
 
-    INTEGER,
-    BOOLEAN,
-    NULL,
-    RETURN
+    static final String INTEGER = "INTEGER";
+    static final String BOOLEAN = "BOOLEAN";
+    static final String NULL = "NULL";
+    static final String RETURN = "RETURN";
+    static final String ERROR = "ERROR";
+    static final String FUNCTION = "FUNCTION";
+    static final String STRING = "STRING";
+    static final String BUILTIN = "BUILTIN";
+    static final String ARRAY = "ARRAY";
+
+    private ValueType() {
+        super();
+    }
 
 }

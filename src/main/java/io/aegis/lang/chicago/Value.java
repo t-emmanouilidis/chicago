@@ -2,7 +2,7 @@ package io.aegis.lang.chicago;
 
 public interface Value {
 
-    ValueType type();
+    String type();
 
     String inspect();
 
@@ -14,6 +14,22 @@ public interface Value {
         return type.isAssignableFrom(getClass());
     }
 
+    default boolean isNot(Class<?> type) {
+        return !is(type);
+    }
+
     boolean isTruthy();
+
+    default boolean isError() {
+        return false;
+    }
+
+    default boolean isNull() {
+        return false;
+    }
+
+    default boolean isNotNull() {
+        return !isNull();
+    }
 
 }

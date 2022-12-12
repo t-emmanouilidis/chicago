@@ -1,9 +1,11 @@
 package io.aegis.lang.chicago;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public class Parser {
@@ -18,7 +20,7 @@ public class Parser {
     private Token next;
 
     public Parser(String input) {
-        Objects.requireNonNull(input, "input can't be null");
+        requireNonNull(input, "input can't be null");
         this.lexer = new Lexer(input);
 
         advanceTwice();
@@ -70,7 +72,7 @@ public class Parser {
     }
 
     private Optional<Expression> parseExpression(Precedence precedence) {
-        Objects.requireNonNull(precedence, "precedence can't be null");
+        requireNonNull(precedence, "precedence can't be null");
 
         var prefixParseFunction = prefixParseFunctions.get(current.type());
         if (prefixParseFunction == null) {
@@ -98,7 +100,7 @@ public class Parser {
     }
 
     private Expression parseInfixExpression(Expression left) {
-        Objects.requireNonNull(left, "left can't be null");
+        requireNonNull(left, "left can't be null");
 
         var currentToken = current;
 
@@ -145,38 +147,38 @@ public class Parser {
     }
 
     private boolean currentTokenTypeIs(TokenType type) {
-        Objects.requireNonNull(type, "type can't be null");
+        requireNonNull(type, "type can't be null");
 
         return type.equals(current.type());
     }
 
     private boolean currentTokenTypeIsNot(TokenType type) {
-        Objects.requireNonNull(type, "type can't be null");
+        requireNonNull(type, "type can't be null");
 
         return !currentTokenTypeIs(type);
     }
 
     private boolean nextTokenIsNotOfType(TokenType type) {
-        Objects.requireNonNull(type, "type can't be null");
+        requireNonNull(type, "type can't be null");
 
         return !nextTokenIsOfType(type);
     }
 
     private boolean nextTokenIsOfType(TokenType type) {
-        Objects.requireNonNull(type, "type can't be null");
+        requireNonNull(type, "type can't be null");
 
         return type.equals(next.type());
     }
 
     private void advanceOnlyIfNextTokenIsOfType(TokenType type) {
-        Objects.requireNonNull(type, "type can't be null");
+        requireNonNull(type, "type can't be null");
 
         assertNextTokenIsOfType(type);
         advance();
     }
 
     private void assertNextTokenIsOfType(TokenType type) {
-        Objects.requireNonNull(type, "type can't be null");
+        requireNonNull(type, "type can't be null");
 
         if (nextTokenIsNotOfType(type)) {
             throw new UnexpectedTokenException("Next token should be of type " + type + " but is instead of type " + next.type());
@@ -202,16 +204,19 @@ public class Parser {
     }
 
     private Map<TokenType, PrefixParseFunction> createPrefixParseFunctions() {
-        return Map.of(
-              TokenType.IDENT, this::parseIdentifier,
-              TokenType.INT, this::parseInteger,
-              TokenType.BANG, this::parsePrefixExpression,
-              TokenType.MINUS, this::parsePrefixExpression,
-              TokenType.TRUE, this::parseBooleanExpression,
-              TokenType.FALSE, this::parseBooleanExpression,
-              TokenType.LPAREN, this::parseGroupedExpression,
-              TokenType.IF, this::parseIfExpression,
-              TokenType.FUNCTION, this::parseFunctionLiteral);
+        Map<TokenType, PrefixParseFunction> map = new EnumMap<>(TokenType.class);
+        map.put(TokenType.IDENT, this::parseIdentifier);
+        map.put(TokenType.INT, this::parseInteger);
+        map.put(TokenType.BANG, this::parsePrefixExpression);
+        map.put(TokenType.MINUS, this::parsePrefixExpression);
+        map.put(TokenType.TRUE, this::parseBooleanExpression);
+        map.put(TokenType.FALSE, this::parseBooleanExpression);
+        map.put(TokenType.LPAREN, this::parseGroupedExpression);
+        map.put(TokenType.IF, this::parseIfExpression);
+        map.put(TokenType.FUNCTION, this::parseFunctionLiteral);
+        map.put(TokenType.STRING, this::parseString);
+        map.put(TokenType.LBRACKET, this::parseArrayLiteral);
+        return map;
     }
 
     private Map<TokenType, InfixParseFunction> createInfixParseFunctions() {
@@ -224,31 +229,51 @@ public class Parser {
               TokenType.NOT_EQUAL, this::parseInfixExpression,
               TokenType.LESS_THAN, this::parseInfixExpression,
               TokenType.GREATER_THAN, this::parseInfixExpression,
-              TokenType.LPAREN, this::parseCallExpression);
+              TokenType.LPAREN, this::parseCallExpression,
+              TokenType.LBRACKET, this::parseIndexExpression);
+    }
+
+    private Expression parseIndexExpression(Expression left) {
+        requireNonNull(left, "left can't be null");
+        var currentToken = current;
+        advance();
+        var index = parseExpression(Precedence.LOWEST);
+        advanceOnlyIfNextTokenIsOfType(TokenType.RBRACKET);
+        return index.map(idx -> new IndexExpression(currentToken, left, idx))
+              .orElse(null);
+    }
+
+    private Expression parseArrayLiteral() {
+        var currentToken = current;
+        var elements = parseExpressionList(TokenType.RBRACKET);
+        return new ArrayLiteral(currentToken, elements);
     }
 
     private Expression parseCallExpression(Expression function) {
-        Objects.requireNonNull(function, "function can't be null");
+        requireNonNull(function, "function can't be null");
 
         var currentToken = current;
-        var arguments = parseCallArguments();
+        var arguments = parseExpressionList(TokenType.RPAREN);
         return new CallExpression(currentToken, function, arguments);
     }
 
-    private List<Expression> parseCallArguments() {
-        if (nextTokenIsOfType(TokenType.RPAREN)) {
+    private List<Expression> parseExpressionList(TokenType endTokenType) {
+        requireNonNull(endTokenType, "endTokenType can't be null");
+
+        if (nextTokenIsOfType(endTokenType)) {
             advance();
             return List.of();
         }
         advance();
-        List<Expression> arguments = new ArrayList<>();
-        parseExpression(Precedence.LOWEST).ifPresent(arguments::add);
+
+        List<Expression> list = new ArrayList<>();
+        parseExpression(Precedence.LOWEST).ifPresent(list::add);
         while (nextTokenIsOfType(TokenType.COMMA)) {
             advanceTwice();
-            parseExpression(Precedence.LOWEST).ifPresent(arguments::add);
+            parseExpression(Precedence.LOWEST).ifPresent(list::add);
         }
-        advanceOnlyIfNextTokenIsOfType(TokenType.RPAREN);
-        return arguments;
+        advanceOnlyIfNextTokenIsOfType(endTokenType);
+        return list;
     }
 
     private Expression parseFunctionLiteral() {
@@ -339,6 +364,10 @@ public class Parser {
         }
     }
 
+    private Expression parseString() {
+        return new StringLiteral(current, current.literal());
+    }
+
     private Expression parsePrefixExpression() {
         var currentToken = current;
         advance();
@@ -357,7 +386,8 @@ public class Parser {
               TokenType.MINUS, Precedence.SUM,
               TokenType.SLASH, Precedence.PRODUCT,
               TokenType.ASTERISK, Precedence.PRODUCT,
-              TokenType.LPAREN, Precedence.FUNCTION_CALL);
+              TokenType.LPAREN, Precedence.FUNCTION_CALL,
+              TokenType.LBRACKET, Precedence.INDEX);
     }
 
 }

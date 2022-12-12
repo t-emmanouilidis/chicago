@@ -1,18 +1,33 @@
 package io.aegis.lang.chicago;
 
 import static io.aegis.lang.chicago.Token.ASSIGN;
+import static io.aegis.lang.chicago.Token.ASTERISK;
 import static io.aegis.lang.chicago.Token.BANG;
 import static io.aegis.lang.chicago.Token.COMMA;
+import static io.aegis.lang.chicago.Token.ELSE;
+import static io.aegis.lang.chicago.Token.EQUAL;
+import static io.aegis.lang.chicago.Token.FALSE;
 import static io.aegis.lang.chicago.Token.FUNCTION;
+import static io.aegis.lang.chicago.Token.GREATER_THAN;
+import static io.aegis.lang.chicago.Token.IF;
 import static io.aegis.lang.chicago.Token.LEFT_BRACE;
+import static io.aegis.lang.chicago.Token.LEFT_BRACKET;
 import static io.aegis.lang.chicago.Token.LEFT_PARENTHESIS;
+import static io.aegis.lang.chicago.Token.LESS_THAN;
 import static io.aegis.lang.chicago.Token.LET;
+import static io.aegis.lang.chicago.Token.MINUS;
+import static io.aegis.lang.chicago.Token.NOT_EQUAL;
 import static io.aegis.lang.chicago.Token.PLUS;
+import static io.aegis.lang.chicago.Token.RETURN;
 import static io.aegis.lang.chicago.Token.RIGHT_BRACE;
+import static io.aegis.lang.chicago.Token.RIGHT_BRACKET;
 import static io.aegis.lang.chicago.Token.RIGHT_PARENTHESIS;
 import static io.aegis.lang.chicago.Token.SEMICOLON;
+import static io.aegis.lang.chicago.Token.SLASH;
+import static io.aegis.lang.chicago.Token.TRUE;
 import static io.aegis.lang.chicago.Token.newIdentifier;
 import static io.aegis.lang.chicago.Token.newInteger;
+import static io.aegis.lang.chicago.Token.newString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,6 +65,9 @@ public class LexerTest {
               }
               10 == 10;
               10 != 9;
+              "foobar"
+              "foo bar"
+              [1, 2]
               """;
         var expectedTokens = List.of(
               LET,
@@ -84,42 +102,50 @@ public class LexerTest {
               RIGHT_PARENTHESIS,
               SEMICOLON,
               BANG,
-              Token.MINUS,
-              Token.SLASH,
-              Token.ASTERISK,
+              MINUS,
+              SLASH,
+              ASTERISK,
               newInteger("5"),
               SEMICOLON,
               newInteger("5"),
-              Token.LESS_THAN,
+              LESS_THAN,
               newInteger("10"),
-              Token.GREATER_THAN,
+              GREATER_THAN,
               newInteger("5"),
               SEMICOLON,
-              Token.IF,
+              IF,
               LEFT_PARENTHESIS,
               newInteger("5"),
-              Token.LESS_THAN,
+              LESS_THAN,
               newInteger("10"),
               RIGHT_PARENTHESIS,
               LEFT_BRACE,
-              Token.RETURN,
-              Token.TRUE,
+              RETURN,
+              TRUE,
               SEMICOLON,
               RIGHT_BRACE,
-              Token.ELSE,
+              ELSE,
               LEFT_BRACE,
-              Token.RETURN,
-              Token.FALSE,
+              RETURN,
+              FALSE,
               SEMICOLON,
               RIGHT_BRACE,
               newInteger("10"),
-              Token.EQUAL,
+              EQUAL,
               newInteger("10"),
               SEMICOLON,
               newInteger("10"),
-              Token.NOT_EQUAL,
+              NOT_EQUAL,
               newInteger("9"),
-              SEMICOLON
+              SEMICOLON,
+              newString("foobar"),
+              newString("foo bar"),
+              LEFT_BRACKET,
+              newInteger("1"),
+              COMMA,
+              newInteger("2"),
+              RIGHT_BRACKET,
+              new Token(TokenType.EOF, "")
         );
         var lexer = new Lexer(input);
         for (Token expected : expectedTokens) {

@@ -11,6 +11,7 @@ public class Precedence implements Comparable<Precedence> {
     public static final Precedence PRODUCT = new Precedence("PRODUCT", 4);
     public static final Precedence PREFIX = new Precedence("PREFIX", 5);
     public static final Precedence FUNCTION_CALL = new Precedence("FUNCTION_CALL", 6);
+    public static final Precedence INDEX = new Precedence("INDEX", 7);
 
     private final String name;
     private final int value;

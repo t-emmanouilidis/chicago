@@ -22,7 +22,7 @@ public final class Repl {
                         parser.printErrors();
                         continue;
                     }
-                    var evaluated = new Evaluator().evaluate(program);
+                    var evaluated = new Evaluator().evaluate(new Environment(), program);
                     System.out.println(evaluated.inspect());
                 }
             }

@@ -15,6 +15,8 @@ public enum TokenType {
     RPAREN(")"),
     LBRACE("{"),
     RBRACE("}"),
+    LBRACKET("["),
+    RBRACKET("]"),
     FUNCTION("fn"),
     LET("let"),
     TRUE("true"),
@@ -31,7 +33,8 @@ public enum TokenType {
     LESS_THAN("<"),
     GREATER_THAN(">"),
     NOT_EQUAL("!="),
-    EQUAL("==");
+    EQUAL("=="),
+    STRING("STRING");
 
     private final String keyword;
 

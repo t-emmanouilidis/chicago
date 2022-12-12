@@ -5,7 +5,7 @@ public enum NullValue implements Value {
     INSTANCE;
 
     @Override
-    public ValueType type() {
+    public String type() {
         return ValueType.NULL;
     }
 
@@ -19,8 +19,17 @@ public enum NullValue implements Value {
         return false;
     }
 
+    @Override
+    public boolean isNull() {
+        return true;
+    }
+
     public static NullValue get() {
         return INSTANCE;
     }
 
+    @Override
+    public String toString() {
+        return inspect();
+    }
 }

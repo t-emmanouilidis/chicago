@@ -19,6 +19,8 @@ public record Token(TokenType type, String literal) {
     public static final Token RIGHT_PARENTHESIS = new Token(TokenType.RPAREN, ")");
     public static final Token LEFT_BRACE = new Token(TokenType.LBRACE, "{");
     public static final Token RIGHT_BRACE = new Token(TokenType.RBRACE, "}");
+    public static final Token LEFT_BRACKET = new Token(TokenType.LBRACKET, "[");
+    public static final Token RIGHT_BRACKET = new Token(TokenType.RBRACKET, "]");
     public static final Token FUNCTION = new Token(TokenType.FUNCTION, "fn");
     public static final Token IF = new Token(TokenType.IF, "if");
     public static final Token TRUE = new Token(TokenType.TRUE, "true");
@@ -56,6 +58,10 @@ public record Token(TokenType type, String literal) {
 
     public static Token newInteger(String literal) {
         return new Token(TokenType.INT, literal);
+    }
+
+    public static Token newString(String literal) {
+        return new Token(TokenType.STRING, literal);
     }
 
     public boolean sameAs(Token otherToken) {

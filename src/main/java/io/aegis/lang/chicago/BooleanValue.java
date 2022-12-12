@@ -16,7 +16,7 @@ public enum BooleanValue implements Value {
     }
 
     @Override
-    public ValueType type() {
+    public String type() {
         return ValueType.BOOLEAN;
     }
 

@@ -54,6 +54,12 @@ public class Lexer {
             case '}':
                 token = Token.RIGHT_BRACE;
                 break;
+            case '[':
+                token = Token.LEFT_BRACKET;
+                break;
+            case ']':
+                token = Token.RIGHT_BRACKET;
+                break;
             case '<':
                 token = Token.LESS_THAN;
                 break;
@@ -77,6 +83,9 @@ public class Lexer {
             case '*':
                 token = Token.ASTERISK;
                 break;
+            case '"':
+                token = Token.newString(readString());
+                break;
             case 0:
                 token = new Token(TokenType.EOF, "");
                 break;
@@ -93,6 +102,17 @@ public class Lexer {
         }
         readNextChar();
         return token;
+    }
+
+    private String readString() {
+        readNextChar();
+        int start = currentPosition;
+
+        while (current != '"' && current != 0) {
+            readNextChar();
+        }
+        int end = currentPosition;
+        return input.substring(start, end);
     }
 
     private void skipWhitespace() {
@@ -143,8 +163,8 @@ public class Lexer {
 
     private boolean isLetter(char character) {
         return ('a' <= character && character <= 'z') ||
-                ('A' <= character && character <= 'Z') ||
-                character == '_';
+              ('A' <= character && character <= 'Z') ||
+              character == '_';
     }
 
     private boolean isDigit(char character) {
