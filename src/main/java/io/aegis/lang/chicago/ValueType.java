@@ -11,6 +11,7 @@ public final class ValueType {
     static final String STRING = "STRING";
     static final String BUILTIN = "BUILTIN";
     static final String ARRAY = "ARRAY";
+    static final String DICTIONARY = "DICTIONARY";
 
     private ValueType() {
         super();

@@ -6,6 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -54,7 +55,10 @@ public class EvaluatorTest {
                     {"first([1, 2, 3]);", new IntegerValue(1)},
                     {"last([1, 2, \"hello\"]);", new StringValue("hello")},
                     {"tail([1, 2]);", new Array(List.of(new IntegerValue(2)))},
-                    {"push([1], 2);", new Array(List.of(IntegerValue.of(1), IntegerValue.of(2)))}
+                    {"push([1], 2);", new Array(List.of(IntegerValue.of(1), IntegerValue.of(2)))},
+                    {"{\"one\": 1 + 1};", new Dictionary(Map.of(new StringValue("one"), new IntegerValue(2)))},
+                    {"{\"one\": 1}[\"one\"]", new IntegerValue(1)},
+                    {"let map = {\"one\": 1}; map[\"one\"];", new IntegerValue(1)}
               }
         );
     }

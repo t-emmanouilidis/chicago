@@ -10,6 +10,7 @@ public enum TokenType {
     IDENT("IDENT"),
     INT("INT"),
     COMMA(","),
+    COLON(":"),
     SEMICOLON(";"),
     LPAREN("("),
     RPAREN(")"),

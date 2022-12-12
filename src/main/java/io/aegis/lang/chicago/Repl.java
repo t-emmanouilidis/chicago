@@ -10,19 +10,20 @@ public final class Repl {
     private static final String PROMPT = ">> ";
 
     public static void start() throws IOException {
+        Environment environment = new Environment();
         try (Reader is = new InputStreamReader(System.in);
                 BufferedReader bufferedReader = new BufferedReader(is)) {
             while (true) {
                 System.out.print(PROMPT);
                 String line = bufferedReader.readLine();
-                if (line != null) {
+                if (line != null && !line.isBlank()) {
                     var parser = new Parser(line);
                     var program = parser.parseProgram();
                     if (parser.foundErrors()) {
                         parser.printErrors();
                         continue;
                     }
-                    var evaluated = new Evaluator().evaluate(new Environment(), program);
+                    var evaluated = new Evaluator().evaluate(environment, program);
                     System.out.println(evaluated.inspect());
                 }
             }

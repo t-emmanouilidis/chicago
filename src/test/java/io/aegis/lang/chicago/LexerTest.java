@@ -3,6 +3,7 @@ package io.aegis.lang.chicago;
 import static io.aegis.lang.chicago.Token.ASSIGN;
 import static io.aegis.lang.chicago.Token.ASTERISK;
 import static io.aegis.lang.chicago.Token.BANG;
+import static io.aegis.lang.chicago.Token.COLON;
 import static io.aegis.lang.chicago.Token.COMMA;
 import static io.aegis.lang.chicago.Token.ELSE;
 import static io.aegis.lang.chicago.Token.EQUAL;
@@ -68,6 +69,7 @@ public class LexerTest {
               "foobar"
               "foo bar"
               [1, 2]
+              {"foo": "bar"}
               """;
         var expectedTokens = List.of(
               LET,
@@ -145,6 +147,11 @@ public class LexerTest {
               COMMA,
               newInteger("2"),
               RIGHT_BRACKET,
+              LEFT_BRACE,
+              newString("foo"),
+              COLON,
+              newString("bar"),
+              RIGHT_BRACE,
               new Token(TokenType.EOF, "")
         );
         var lexer = new Lexer(input);

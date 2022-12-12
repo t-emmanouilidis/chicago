@@ -266,4 +266,24 @@ public class ParserTest {
         assertThat(indexExpr.index().getClass(), is(equalTo(InfixExpression.class)));
     }
 
+    @Test
+    public void shouldBeAbleToParseAnEmptyDictionaryExpression() {
+        var input = "{}";
+        var parser = new Parser(input);
+        var program = parser.parseProgram();
+        var dictionaryExpr = program.iterator()
+              .nextStatementAs(ExpressionStatement.class)
+              .expressionAs(DictionaryLiteral.class);
+        assertThat(dictionaryExpr.size(), is(equalTo(0)));
+    }
+
+    @Test
+    public void shouldBeAbleToParseADictionaryExpression() {
+        var input = "{\"one\": 1}";
+        var parser = new Parser(input);
+        var program = parser.parseProgram();
+        var dictionaryExpr = program.iterator().nextStatementAs(ExpressionStatement.class).expressionAs(DictionaryLiteral.class);
+        assertThat(dictionaryExpr.size(), is(equalTo(1)));
+    }
+
 }

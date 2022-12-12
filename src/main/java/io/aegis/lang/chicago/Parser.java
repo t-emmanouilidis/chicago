@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -216,6 +217,7 @@ public class Parser {
         map.put(TokenType.FUNCTION, this::parseFunctionLiteral);
         map.put(TokenType.STRING, this::parseString);
         map.put(TokenType.LBRACKET, this::parseArrayLiteral);
+        map.put(TokenType.LBRACE, this::parseDictionary);
         return map;
     }
 
@@ -231,6 +233,24 @@ public class Parser {
               TokenType.GREATER_THAN, this::parseInfixExpression,
               TokenType.LPAREN, this::parseCallExpression,
               TokenType.LBRACKET, this::parseIndexExpression);
+    }
+
+    private Expression parseDictionary() {
+        var currentToken = current;
+        Map<Expression, Expression> pairs = new HashMap<>();
+        while (nextTokenIsNotOfType(TokenType.RBRACE)) {
+            advance();
+            var key = parseExpression(Precedence.LOWEST);
+            advanceOnlyIfNextTokenIsOfType(TokenType.COLON);
+            advance();
+            var value = parseExpression(Precedence.LOWEST);
+            key.ifPresent(k -> value.ifPresent(v -> pairs.put(k, v)));
+            if (nextTokenIsNotOfType(TokenType.RBRACE)) {
+                advanceOnlyIfNextTokenIsOfType(TokenType.COMMA);
+            }
+        }
+        advanceOnlyIfNextTokenIsOfType(TokenType.RBRACE);
+        return new DictionaryLiteral(currentToken, pairs);
     }
 
     private Expression parseIndexExpression(Expression left) {

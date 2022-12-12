@@ -14,6 +14,7 @@ class BuiltinFunctions {
         functionMap.put("last", last());
         functionMap.put("tail", tail());
         functionMap.put("push", push());
+        functionMap.put("print", print());
     }
 
     Value get(String name) {
@@ -106,6 +107,15 @@ class BuiltinFunctions {
             }
             var elemArg = args[1];
             return arrayArg.as(Array.class).push(elemArg);
+        });
+    }
+
+    private static Builtin print() {
+        return new Builtin(args -> {
+            for (Value arg : args) {
+                System.out.println(arg.inspect());
+            }
+            return NullValue.get();
         });
     }
 

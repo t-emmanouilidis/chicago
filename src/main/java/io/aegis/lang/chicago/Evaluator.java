@@ -3,7 +3,10 @@ package io.aegis.lang.chicago;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 public class Evaluator {
@@ -80,8 +83,33 @@ public class Evaluator {
                 return index;
             }
             return evaluateIndexExpression(left, index);
+        } else if (node instanceof DictionaryLiteral dictionaryLiteral) {
+            return evaluateDictionary(environment, dictionaryLiteral);
         }
         return NullValue.get();
+    }
+
+    private Value evaluateDictionary(Environment environment, DictionaryLiteral dictionaryLiteral) {
+        requireNonNull(environment, "environment can't be null");
+        requireNonNull(dictionaryLiteral, "dictionaryLiteral can't be null");
+
+        if (dictionaryLiteral.isEmpty()) {
+            return Dictionary.EMPTY;
+        }
+
+        Map<Value, Value> map = new HashMap<>();
+        for (Entry<Expression, Expression> entry : dictionaryLiteral.pairs().entrySet()) {
+            var key = evaluate(environment, entry.getKey());
+            if (key.isError()) {
+                return key;
+            }
+            var value = evaluate(environment, entry.getValue());
+            if (value.isError()) {
+                return value;
+            }
+            map.put(key, value);
+        }
+        return new Dictionary(map);
     }
 
     private Value evaluateIndexExpression(Value left, Value index) {
@@ -90,9 +118,15 @@ public class Evaluator {
 
         if (left.is(Array.class) && index.is(IntegerValue.class)) {
             return evaluateArrayIndexExpression(left, index);
+        } else if (left.is(Dictionary.class)) {
+            return evaluateDictionaryIndexExpression(left, index);
         } else {
             return newError("Index operator is not supported for: %s", left.type());
         }
+    }
+
+    private Value evaluateDictionaryIndexExpression(Value left, Value index) {
+        return left.as(Dictionary.class).get(index);
     }
 
     private Value evaluateArrayIndexExpression(Value left, Value index) {

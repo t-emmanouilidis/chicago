@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record Array(List<Value> elements) implements Value {
 
@@ -20,7 +21,7 @@ public record Array(List<Value> elements) implements Value {
 
     @Override
     public String inspect() {
-        return elements.toString();
+        return elements.stream().map(Value::inspect).collect(Collectors.joining(", ", "[", "]"));
     }
 
     @Override

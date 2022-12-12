@@ -29,6 +29,7 @@ public record Token(TokenType type, String literal) {
     public static final Token RETURN = new Token(TokenType.RETURN, "return");
     public static final Token EQUAL = new Token(TokenType.EQUAL, "==");
     public static final Token NOT_EQUAL = new Token(TokenType.NOT_EQUAL, "!=");
+    public static final Token COLON = new Token(TokenType.COLON, ":");
 
     public Token(TokenType type, char literal) {
         this(type, String.valueOf(literal));
